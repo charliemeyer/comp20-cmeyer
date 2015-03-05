@@ -7,5 +7,9 @@ function parse(){
 }
 
 function parseData(data){
-    console.log(data);
+    if(request.readyState == 4){
+        console.log(request.responseText);
+    } else {
+        console.log("we failed");
+    }
 }
