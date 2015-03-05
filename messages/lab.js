@@ -10,7 +10,8 @@ function parseData(data){
         responseObject = JSON.parse(request.responseText);
         messages = document.getElementById("messages");
         responseObject.forEach(function(messageObject){
-            messages.innerHTML += messageObject['content'];
+            messages.innerHTML += '<p>' + messageObject['content'] + ' ' + '<span>'
+                                        + messageObject['username'] '</span></p>';
         });
     } else {
         console.log("Still working");
