@@ -11,7 +11,7 @@ function parseData(data){
         messages = document.getElementById("messages");
         responseObject.forEach(function(messageObject){
             messages.innerHTML += '<p>' + messageObject['content'] + ' ' + '<span>'
-                                        + messageObject['username'] '</span></p>';
+                                        + messageObject['username'] + '</span></p>';
         });
     } else {
         console.log("Still working");
