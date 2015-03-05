@@ -1,4 +1,3 @@
-// Your JavaScript goes here...
 function parse(){
     request = new XMLHttpRequest();
     request.open("GET", "data.json", true);
@@ -8,8 +7,12 @@ function parse(){
 
 function parseData(data){
     if(request.readyState == 4){
-        console.log(request.responseText);
+        responseObject = JSON.parse(request.responseText);
+        messages = document.getElementById("messages");
+        responseObject.forEach(function(messageObject){
+            messages.append(messageObject['content']);
+        });
     } else {
-        console.log("we failed");
+        console.log("Still working");
     }
 }
