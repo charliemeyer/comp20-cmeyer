@@ -20,7 +20,7 @@
       alert("long: " + lng + " lat: " + lat);
       request = new XMLHttpRequest();
       requestURL = "https://secret-about-box.herokuapp.com/sendLocation"
-      request.open("POST", , true);
+      request.open("POST", requestURL, true);
       request.onreadystatechange = parseData;
       request.send();
     }
