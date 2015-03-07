@@ -17,6 +17,7 @@
     function sendLocationData(pos){
       lat = pos.coords.latitude;
       lng = pos.coords.longitude;
+      alert("lat: " + lat + " lng: " + lng);
       request = new XMLHttpRequest();
       requestURL = "https://secret-about-box.herokuapp.com/sendLocation"
       request.open("POST", requestURL + "?login=JoshRamsey&lat=" + lat +"&lng=" + lng, true);
