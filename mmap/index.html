@@ -9,7 +9,7 @@
     function make_map(lat, lng){
       var mapOptions = {
         center: { lat: lat, lng: lng},
-        zoom: 3
+        zoom: 11
       };
       var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
     }
@@ -20,13 +20,16 @@
       alert("lat: " + lat + " lng: " + lng);
       request = new XMLHttpRequest();
       requestURL = "https://secret-about-box.herokuapp.com/sendLocation"
-      request.open("POST", requestURL + "?login=JoshRamsey&lat=" + lat +"&lng=" + lng, true);
+      requestWithParams = requestURL + "?login=JoshRamsey&lat=" + lat +"&lng=" + lng;
+      alert(requestWithParams);
+      request.open("POST", requestWithParams, true);
       request.onreadystatechange = parseMapData;
       request.send();
       make_map(lat, lng);
     }
 
     function parseMapData(){
+      alert("parsing map data")
       if(request.readyState == 4 && request.status == 200){
         responseObject = JSON.parse(request.responseText);
         console.log(responseObject);
