@@ -17,13 +17,13 @@
     function sendLocationData(pos){
       lat = pos.coords.latitude;
       lng = pos.coords.longitude;
-      alert("lat: " + lat + " lng: " + lng);
       request = new XMLHttpRequest();
-      request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      alert("lat: " + lat + " lng: " + lng);
       requestURL = "https://secret-about-box.herokuapp.com/sendLocation"
       requestWithParams = requestURL + "?login=JoshRamsey&lat=" + lat +"&lng=" + lng;
       alert(requestWithParams);
       request.open("POST", requestWithParams, true);
+      request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
       request.onreadystatechange = parseMapData;
       request.send();
       make_map(lat, lng);
