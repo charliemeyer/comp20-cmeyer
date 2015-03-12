@@ -40,12 +40,20 @@
     function parseMapData(){
       alert("parsing map data")
       if(request.readyState == 4 && request.status == 200){
-          responseObject = JSON.parse(request.responseText);
-          responseObject.forEach(function(locationObject){
+        responseObject = JSON.parse(request.responseText);
+        responseObject.forEach(function(locationObject){
           console.log(locationObject["login"]);
-        })
+          var personLocation = new google.maps.LatLng(locationObject["lat"],
+                                                  locationObject["lng"]);
+          console.log(personLocation);
+          var markers = new google.maps.Marker({
+            position: personLocation,
+            title: locationObject["login"],
+            map: map 
+          });
+        });
       }
-    }
+    } 
 
     function createMarker(place){
         var placeLoc = place.geometry.location;
