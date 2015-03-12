@@ -12,6 +12,7 @@
         zoom: 11
       };
     var map;
+    var infowindow = new google.maps.InfoWindow(); 
 
     function init(){
       map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
@@ -38,35 +39,25 @@
     }
 
     function parseMapData(){
-      alert("parsing map data")
       if(request.readyState == 4 && request.status == 200){
         responseObject = JSON.parse(request.responseText);
         responseObject.forEach(function(locationObject){
           console.log(locationObject["login"]);
           var personLocation = new google.maps.LatLng(locationObject["lat"],
                                                   locationObject["lng"]);
-          console.log(personLocation);
-          var markers = new google.maps.Marker({
+          var marker = new google.maps.Marker({
             position: personLocation,
             title: locationObject["login"],
             map: map 
           });
+          google.maps.event.addListener(marker, 'click', function() {
+            // infowindow.close();
+            infowindow.setContent(this.title);
+            infowindow.open(map, this);
+          });
         });
       }
     } 
-
-    function createMarker(place){
-        var placeLoc = place.geometry.location;
-        var marker = new google.maps.Marker({
-            map: map,
-            position: place.geometry.location
-        });
-        google.maps.event.addListener(marker, 'click', function() {
-            infowindow.close();
-            infowindow.setContent(place.name);
-            infowindow.open(map, this);
-        });
-    }
   </script>
 </head>
 <body onload="init()">
