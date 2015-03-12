@@ -20,12 +20,12 @@
       request = new XMLHttpRequest();
       alert("lat: " + lat + " lng: " + lng);
       requestURL = "https://secret-about-box.herokuapp.com/sendLocation"
-      requestWithParams = requestURL + "?login=JoshRamsey&lat=" + lat +"&lng=" + lng;
-      alert(requestWithParams);
-      request.open("POST", requestWithParams, true);
+      params = "login=JoshRamsey&lat=" + lat +"&lng=" + lng;
+      alert(params);
+      request.open("POST", requestURL, true);
       request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
       request.onreadystatechange = parseMapData;
-      request.send();
+      request.send(params);
       make_map(lat, lng);
     }
 
