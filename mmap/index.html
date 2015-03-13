@@ -11,7 +11,7 @@
     var me = new google.maps.LatLng(myLat, myLng);
     var mapOptions = {
         center: me,
-        zoom: 11
+        zoom: 15
       };
     var map;
     var infowindow = new google.maps.InfoWindow(); 
@@ -60,13 +60,12 @@
       if(request.readyState == 4 && request.status == 200){
         responseObject = JSON.parse(request.responseText);
         responseObject.forEach(function(locationObject){
-          console.log(locationObject["login"]);
           var personLocation = new google.maps.LatLng(locationObject["lat"],
                                                   locationObject["lng"]);
           theirDistance = distanceFromMe(locationObject["lat"], locationObject["lng"]);
           var marker = new google.maps.Marker({
             position: personLocation,
-            title: locationObject["login"] + "\n" + theirDistance.toString() ,
+            title: locationObject["login"] + "\n" + theirDistance.toString() + " miles away",
             map: map
           });
           google.maps.event.addListener(marker, 'click', function() {
