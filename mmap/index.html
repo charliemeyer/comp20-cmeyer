@@ -18,7 +18,6 @@
 
     function init(){
       map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-      console.log(map);
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(sendLocationData);
       }
@@ -29,6 +28,17 @@
       myLng = pos.coords.longitude;
       me = new google.maps.LatLng(myLat, myLng);                
       map.panTo(me);
+      image = 'mypic.png'
+      var myMarker = new google.maps.Marker({
+            position: me,
+            title: "My location (JoshRamsey)",
+            icon: image,
+            map: map
+      });
+      google.maps.event.addListener(myMarker, 'click', function() {
+            infowindow.setContent(this.title);
+            infowindow.open(map, this);
+      });
       request = new XMLHttpRequest();
       requestURL = "https://secret-about-box.herokuapp.com/sendLocation"
       params = "login=JoshRamsey&lat=" + myLat +"&lng=" + myLng;
@@ -53,7 +63,7 @@
                       Math.sin(dLng/2) * Math.sin(dLng/2);  
       var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
       var d = R * c; 
-      return .6 * d; // to convert to miles
+      return .62137 * d; // to convert to miles
     }
 
     function parseMapData(){
@@ -65,7 +75,7 @@
           theirDistance = distanceFromMe(locationObject["lat"], locationObject["lng"]);
           var marker = new google.maps.Marker({
             position: personLocation,
-            title: locationObject["login"] + "\n" + theirDistance.toString() + " miles away",
+            title: locationObject["login"] + "\n" + theirDistance.toPrecision(5).toString() + " miles away",
             map: map
           });
           google.maps.event.addListener(marker, 'click', function() {
