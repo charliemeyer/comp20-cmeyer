@@ -2,12 +2,94 @@
 <html>
 <head>
   <title>Security Assesment</title>
+  <link href='http://fonts.googleapis.com/css?family=Oswald|Roboto+Slab' rel='stylesheet' type='text/css'>
 </head>
 <body>
+  <style type="text/css">
+    body {
+      width: 85%;
+      margin: 0 auto 20px auto;
+      font-family: 'Roboto Slab', serif;
+    }  
+    h1, h2, h3, h4, h5, h6{
+      font-family: 'Oswald', sans-serif; 
+    }
+    img{
+      height: 200px;
+    }
+    #title, #quote, #name {
+      text-align: center;
+    }
+    #quote {
+      width: 50%;
+      margin: 0 auto;
+    }
+  </style>
+  <h1 id="title">Bad Job Ming: Trusting User Input Gone Wrong</h1>
+  <h3 id="name">By: Charles Meyer, April 2015</h3>
+  <p id="quote">"Never trust user input. Never trust user input. Never trust user input. Never trust user input.
+  Never trust user input. Never trust user input. Never trust user input. Never trust user input." -Ming Chow</p>
   <h1>Introduction</h1>
+  <hr>
+  <p>The purpose of this report is to find security flaws in Ming Chow's implementation of the server for the 
+  Tufts' Marauder's Map.</p>
   <h1>Methodology</h1>
+  <hr>
+  <p>I received a copy of Ming's server.js code and set it up on a new Heroku app, aptly named "badjobming",
+  due to the numerous security holes in his code. I then used the Postman app for Chrome to carry out my attacks on the site.</p>
   <h1>Abstract of Findings</h1>
+  <hr>
+  <p>The badjobming application is quite insecure. It is vulnerable to several common attacks, which jeopardize the ability of users to access the information from the site, and may even put them in danger (see below under "Cross Site Scripting").</p> 
   <h1>Issues Found</h1>
+  <h2>Issue 1: Cross Site Scripting</h2>
+  <ul>
+    <li><h3>Location:</h3></li>
+    <li><h3>Severity:</h3></li>
+    <li><h3>Description:</h3></li>
+    <li><h3>Proof:</h3></li>
+    <li><h3>Resolution:</h3></li>
+  </ul>
+  <br>
+  <h2>Issue 2: No User Authentication</h2>
+  <ul>
+    <li><h3>Location:</h3></li>
+    <li><h3>Severity:</h3></li>
+    <li><h3>Description:</h3></li>
+    <li><h3>Proof:</h3></li>
+    <li><h3>Resolution:</h3></li>
+  </ul>
+  <br>
+  <h2>Issue 3: More More Cross Site Scripting</h2>
+  <ul>
+    <li><h3>Location:</h3></li>
+    <li><h3>Severity:</h3></li>
+    <li><h3>Description:</h3></li>
+    <li><h3>Proof:</h3></li>
+    <li><h3>Resolution:</h3></li>
+  </ul>
+  <hr>
   <h1>Conclusion</h1>
+  <hr>
+  <p>Clearly, the lesson here is that Mr. Chow should have NEVER trusted user input. At low cost, he could have sanitized user input before storing it in his database and sending it back to be displayed on the client. Although implementing user authentication would have been time consuming, checking submitted logins against a white-list would have protected against the most egregious hacks of the site (coincidentally, this would have effectively stopped basic attempts at XSS as well). 
+
+  <br>
+  <br>
+  <hr>
+  <h3>Bonus: "Never Trust User Input" Generator</h3>
+  <p>In case the point of this report was unclear, enter a number and have your favorite security lesson repeated at you that many times!</p>
+  <input type="number" id="num" value="Enter a number...">
+  <input type="submit" value="Submit" onclick="nevertrust()">
+  <div id="nevertrust">...</div>
+  <script type="text/javascript">
+    function nevertrust(){
+      var num = document.getElementById("num").value;
+      if (num > 100000){
+        return;
+      }
+      for (var i = 0; i < num; i++){
+        document.getElementById("nevertrust").innerHTML += "<p>never trust user input...</p>";
+      }
+    }
+  </script>
 </body>
 </html>
