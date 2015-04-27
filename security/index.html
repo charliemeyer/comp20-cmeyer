@@ -53,7 +53,7 @@
     <a href="screenshots/fakebook.png"><img src="screenshots/fakebook.png" alt="fakebook"></a>
     <a href="screenshots/composemail.png"><img src="screenshots/composemail.png" alt="compose email"></a>
     </li>
-    <li><h3>Resolution:</h3><p>A simple solution to this problem would be to sanitize user input from the login parameter. The "Validator" module for Nodejs provides a function called "escape()" that does just that. In fact, the module is already imported into the server.js code. The escape function replaces special characters with their HTML equivalents, i.e. "<" --> "&amp;lt;"</p>
+    <li><h3>Resolution:</h3><p>A simple solution to this problem would be to sanitize user input from the login parameter. The "Validator" module for Nodejs provides a function called "escape()" that does just that. In fact, the module is already imported into the server.js code. The escape function replaces special characters with their HTML equivalents, i.e. "&lt;" --&gt; "&amp;lt;"</p>
     <p>example code:</p>
     <code>loginToStore = validator.escape(request.body.login);</code></li>
   </ul>
@@ -89,7 +89,7 @@
   <hr>
   <h3>"Never Trust User Input" Generator</h3>
   <p>In case the point of this report was unclear, enter a number and have your favorite security lesson repeated at you that many times!</p>
-  <input type="number" id="num" value="Enter a number...">
+  <input type="number" id="num" placeholder="Enter a number...">
   <input type="submit" value="Submit" onclick="nevertrust()">
   <div id="nevertrust">...</div>
   <script type="text/javascript">
