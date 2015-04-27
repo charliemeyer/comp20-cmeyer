@@ -32,31 +32,42 @@
   <h1>Introduction</h1>
   <hr>
   <p>The purpose of this report is to find security flaws in Ming Chow's implementation of the server for the 
-  Tufts' Marauder's Map.</p>
+  Tufts' Marauder's Map. Webapp located <a href="http://badjobming.herokuapp.com">here.</a> The app is intended to store the most recent latitude and longitude information ("checkins"), and display them back.</p>
   <h1>Methodology</h1>
   <hr>
   <p>I received a copy of Ming's server.js code and set it up on a new Heroku app, aptly named "badjobming",
-  due to the numerous security holes in his code. I then used the Postman app for Chrome to carry out my attacks on the site.</p>
+  due to the numerous security holes in his code. I then used the Postman app for Chrome and the curl command line http client to carry out my attacks on the site. I also examined the server.js code for further issues.</p>
   <h1>Abstract of Findings</h1>
   <hr>
-  <p>The badjobming application is quite insecure. It is vulnerable to several common attacks, which jeopardize the ability of users to access the information from the site, and may even put them in danger (see below under "Cross Site Scripting").</p> 
+  <p>The badjobming application is quite insecure.  It blindly accepts user input, stores it, and redisplays it to other users, making it vulnerable to several common attacks, which jeopardize the ability of users to access the information from the site, and may even put them in danger (see below under "Cross Site Scripting"). Furthermore, it allows for incorrect and spammy input to be posted on the site.</p> 
   <h1>Issues Found</h1>
-  <h2>Issue 1: Cross Site Scripting</h2>
+  <hr>
+  <h2>Issue 1: Cross Site Scripting (XSS)</h2>
   <ul>
-    <li><h3>Location:</h3></li>
-    <li><h3>Severity:</h3></li>
-    <li><h3>Description:</h3></li>
-    <li><h3>Proof:</h3></li>
-    <li><h3>Resolution:</h3></li>
+    <li><h3>Location:</h3><p>Invalid input is allowed on POST '/sendLocation', displayed on GET '/'.</p></li>
+    <li><h3>Severity: High.</h3> <p>Malicious code can be executed on the client's machine. For instance, see the "Fakebook" login screen shot. If a more devious attacker worked to replicate the Facebook login perfectly, they could trick users of the badjobming app into giving away Facebook login info. </p></li>
+    <li><h3>Description:</h3><p>Input for the "login" field of the 'sendLocation' API is not validated. That is, I was able to type a script like <code>alert("Hacked by Charlie");</code> in the login field and have it execute every time the root of the webapp was rendered. I also was able to send arbitrary html which was rendered on the '/' page. That is how I was able to make a fake Facebook login, which by default opened the user's email client with a message to me with their username and password prefilled. (See screenshots).</p></li>
+    <li><h3>Proof:</h3>
+    <a href="screenshots/postman.png"><img src="screenshots/postman.png" alt="postman"></a>
+    <a href="screenshots/alert.png"><img src="screenshots/alert.png" alt="alert"></a>
+    <a href="screenshots/fakebook.png"><img src="screenshots/fakebook.png" alt="fakebook"></a>
+    <a href="screenshots/composemail.png"><img src="screenshots/composemail.png" alt="compose email"></a>
+    </li>
+    <li><h3>Resolution:</h3><p>A simple solution to this problem would be to sanitize user input from the login parameter. The "Validator" module for Nodejs provides a function called "escape()" that does just that. In fact, the module is already imported into the server.js code. The escape function replaces special characters with their HTML equivalents, i.e. "<" --> "&amp;lt;"</p>
+    <p>example code:</p>
+    <code>loginToStore = validator.escape(request.body.login);</code></li>
   </ul>
   <br>
   <h2>Issue 2: No User Authentication</h2>
   <ul>
-    <li><h3>Location:</h3></li>
-    <li><h3>Severity:</h3></li>
-    <li><h3>Description:</h3></li>
-    <li><h3>Proof:</h3></li>
-    <li><h3>Resolution:</h3></li>
+    <li><h3>Location: POST '/sendLocation'</h3></li>
+    <li><h3>Severity: Medium/High</h3><p>Although it could be considered a valid use of the web app, an attacker could post hundreds of messages under different user accounts at different locations, flooding the application with garbage data.  </li>
+    <li><h3>Description:</h3><p>People sending their location to the application through the POST '/sendLocation' endpoint are not required to be a verified user. I was able to exploit this by running a shell script (included in the repo in the file "hack.sh") that used curl to programatically checkin at intervals of one latitude/longitude unit with the username "cmeyerIJ" where I and J were the latitude and the longitude posted with that username.</li>
+    <li><h3>Proof:</h3><p> See the results of programmatic spamming of the site via my Homework 2 client hooked up to badjobming</p>
+    <a href="screenshots/mmap.png"><img src="screenshots/mmap.png" alt="mmap"></a></li>
+    <li><h3>Resolution:</h3><p>Implementing some sort of login system would prevent this kind of attack. This would slow down an attacker, as creating an account takes time and if implemented correctly, would require the existence of a unique email address and would require some verification of users' humanity (i.e. through a CAPTCHA). If possible, the system would be able to reject repeated inputs from the same IP address in the event that a single attacker was able to make many accounts. A simple alternative to fully implementing user accounts would be to check logins against a whitelist of real users. This would stop users from outside of the verified users list from posting, and would prevent situations like the one I created where the database fills up with garbage input (as only the newest checkin for a given user is stored/displayed) </p>
+    <p>example code:</p>
+    <code>if (login in whitelist) {...accept input...} else {..reject input...}</code></li>
   </ul>
   <br>
   <h2>Issue 3: More More Cross Site Scripting</h2>
@@ -70,12 +81,11 @@
   <hr>
   <h1>Conclusion</h1>
   <hr>
-  <p>Clearly, the lesson here is that Mr. Chow should have NEVER trusted user input. At low cost, he could have sanitized user input before storing it in his database and sending it back to be displayed on the client. Although implementing user authentication would have been time consuming, checking submitted logins against a white-list would have protected against the most egregious hacks of the site (coincidentally, this would have effectively stopped basic attempts at XSS as well). 
-
+  <p>Clearly, the lesson here is that Ming should have NEVER trusted user input. At low cost, he could have sanitized user input before storing it in his database and sending it back to be displayed on the client. Although implementing user authentication would have been time consuming, checking submitted logins against a simple white-list would have protected against the most egregious hacks of the site at again, low cost.</p>
   <br>
   <br>
   <hr>
-  <h3>Bonus: "Never Trust User Input" Generator</h3>
+  <h3>"Never Trust User Input" Generator</h3>
   <p>In case the point of this report was unclear, enter a number and have your favorite security lesson repeated at you that many times!</p>
   <input type="number" id="num" value="Enter a number...">
   <input type="submit" value="Submit" onclick="nevertrust()">
