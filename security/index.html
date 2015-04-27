@@ -32,7 +32,7 @@
   <h1>Introduction</h1>
   <hr>
   <p>The purpose of this report is to find security flaws in Ming Chow's implementation of the server for the 
-  Tufts' Marauder's Map. Webapp located <a href="http://badjobming.herokuapp.com">here.</a> The app is intended to store the most recent latitude and longitude information ("checkins"), and display them back.</p>
+  Tufts' Marauder's Map, a version of which is located <a href="http://badjobming.herokuapp.com">here.</a> The app is intended to store the most recent latitude and longitude information ("checkins") of users, and display them back.</p>
   <h1>Methodology</h1>
   <hr>
   <p>I received a copy of Ming's server.js code and set it up on a new Heroku app, aptly named "badjobming",
@@ -45,8 +45,8 @@
   <h2>Issue 1: Cross Site Scripting (XSS)</h2>
   <ul>
     <li><h3>Location:</h3><p>Invalid input is allowed on POST '/sendLocation', displayed on GET '/'.</p></li>
-    <li><h3>Severity: High.</h3> <p>Malicious code can be executed on the client's machine. For instance, see the "Fakebook" login screen shot. If a more devious attacker worked to replicate the Facebook login perfectly, they could trick users of the badjobming app into giving away Facebook login info. </p></li>
-    <li><h3>Description:</h3><p>Input for the "login" field of the 'sendLocation' API is not validated. That is, I was able to type a script like <code>alert("Hacked by Charlie");</code> in the login field and have it execute every time the root of the webapp was rendered. I also was able to send arbitrary html which was rendered on the '/' page. That is how I was able to make a fake Facebook login, which by default opened the user's email client with a message to me with their username and password prefilled. (See screenshots).</p></li>
+    <li><h3>Severity: High.</h3> <p>Malicious code can be executed on the client's machine. For instance, see the "Fakebook" login screen shot. If a more devious attacker worked to replicate the Facebook login perfectly, they could trick users of the badjobming app into giving away Facebook login info. I was also able to make alerts pop up, and if I could have manipulated the site in countless other ways had I wanted to. </p></li>
+    <li><h3>Description:</h3><p>Input for the "login" field of the 'sendLocation' API is not validated. That is, I was able to type a script like <code>alert("Hacked by Charlie");</code> as the login parameter and have it execute every time the '/' webpage was rendered. I also was able to send arbitrary html which was rendered on the '/' page. That is how I was able to make a fake Facebook login, which by default opened the user's email client with a message to me with their username and password prefilled. (See screenshots).</p></li>
     <li><h3>Proof:</h3>
     <a href="screenshots/postman.png"><img src="screenshots/postman.png" alt="postman"></a>
     <a href="screenshots/alert.png"><img src="screenshots/alert.png" alt="alert"></a>
@@ -70,13 +70,15 @@
     <code>if (login in whitelist) {...accept input...} else {..reject input...}</code></li>
   </ul>
   <br>
-  <h2>Issue 3: Out of </h2>
+  <h2>Issue 3: Database Query Injection</h2>
   <ul>
-    <li><h3>Location:</h3></li>
-    <li><h3>Severity:</h3></li>
-    <li><h3>Description:</h3></li>
-    <li><h3>Proof:</h3></li>
-    <li><h3>Resolution:</h3></li>
+    <li><h3>Location: GET '/location.json'</h3></li>
+    <li><h3>Severity: medium</h3><p>I was able to access the location.json endpoint in an unintended manner, using MongoDB database queries instead of regular strings. If used by someone more clever, the problem could be quite severe!</p></li>
+    <li><h3>Description:</h3><p> The input for the GET query to the location.json endpoint is not validated. That is, sending the query 'location[$ne]=cmeyer' was valid, and returned the first database entry not matching the username cmeyer. Luckily, the server.js file calls 'findOne' on the database, otherwise my injection would have returned ALL data with a username not matching 'cmeyer'. Also fortunately, this database injection style attack was only possible to my knowledge on this get endpoint. A more serious vulnerability would have been one that would have let me make arbitrary commands to the database, not just make special queries. For instance, if I had been able to make arbitrary commands, I could have sent a query that would have cleared the database. </p></li>
+    <li><h3>Proof:</h3>
+      <a href="screenshots/injection.png"><img src="screenshots/injection.png" alt="query injection"></a></li>
+    <li><h3>Resolution:</h3>
+        <p>Again, sanitizing the user's input would have prevented this kind of attack. Using the same code from the validator module as was suggested in the XSS vulnerability description would have thwarted this attack.</li>
   </ul>
   <hr>
   <h1>Conclusion</h1>
